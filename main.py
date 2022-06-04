@@ -1,11 +1,8 @@
-from flask import Flask
+from flask import Flask, request
 import random
 import json
 
-app = Flask(__name__)
-@app.route('/joke/', methods=['GET', 'POST'])
-def random_joke():
-    jokes = ["What animal loves a baseball game? A bat.",
+jokes = ["What animal loves a baseball game? A bat.",
              "What did the Dalmatian say after finishing her breakfast? That hit the spot.",
              "What is black and white and red all over? An embarrassed zebra.",
              "Where is a cow's favorite place to go? The moooovies.",
@@ -19,7 +16,15 @@ def random_joke():
              "How do you know when the moon has had enough to eat? When it's full.",
              "What do planets love to read? Comet books."]
 
-    return json.dumps({"joke body": random.choice(jokes)})
+app = Flask(__name__)
+@app.route('/joke/', methods=['GET', 'POST'])
+def random_joke():
+    try:
+        int(request.args.get('num'))
+    except ValueError:
+        print("Request argument not valid")
+        return "Request argument not valid"
+    return json.dumps({"joke body": random.choices(jokes, k=int(request.args.get('num')))})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
