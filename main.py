@@ -19,11 +19,16 @@ jokes = ["What animal loves a baseball game? A bat.",
 app = Flask(__name__)
 @app.route('/joke/', methods=['GET', 'POST'])
 def random_joke():
+    # Check if no arguments, return one joke
+    if len(request.args) == 0:
+        return json.dumps({"joke body": random.choice(jokes)})
+    # Check for "num" argument being int - otherwise return error
     try:
         int(request.args.get('num'))
     except ValueError:
         print("Request argument not valid")
         return "Request argument not valid"
+    # If passed exception handling, return amount of jokes requested
     return json.dumps({"joke body": random.choices(jokes, k=int(request.args.get('num')))})
 
 if __name__ == '__main__':
